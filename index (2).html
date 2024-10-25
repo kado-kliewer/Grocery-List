@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grocery List App</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="app" class="container mx-auto p-4 max-w-md">
+        <h1 class="text-3xl font-bold mb-4 text-center text-blue-600">My Grocery List</h1>
+        
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="item">
+                    Grocery Item
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                       id="item" type="text" v-model="newItem" placeholder="Enter item name">
+            </div>
+            <div class="mb-4">
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="quantity">
+                    Quantity
+                </label>
+                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" 
+                       id="quantity" type="number" v-model="newQuantity" placeholder="Enter quantity">
+            </div>
+            <div class="flex items-center justify-between">
+                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+                        @click="addItem">
+                    Add Item
+                </button>
+            </div>
+        </div>
+
+        <ul class="bg-white shadow-md rounded px-8 pt-6 pb-8">
+            <li v-for="(item, index) in groceryList" :key="index" class="flex items-center justify-between py-2 border-b">
+                <div class="flex items-center">
+                    <input type="checkbox" v-model="item.done" class="mr-2">
+                    <span :class="{ 'line-through': item.done }">{{ item.name }} ({{ item.quantity }})</span>
+                </div>
+                <button @click="removeItem(index)" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">
+                    Delete
+                </button>
+            </li>
+        </ul>
+    </div>
+
+    <script>
+        const { createApp, ref } = Vue
+
+        createApp({
+            setup() {
+                const newItem = ref('')
+                const newQuantity = ref(1)
+                const groceryList = ref([])
+
+                function addItem() {
+                    if (newItem.value.trim() && newQuantity.value > 0) {
+                        groceryList.value.push({
+                            name: newItem.value.trim(),
+                            quantity: newQuantity.value,
+                            done: false
+                        })
+                        newItem.value = ''
+                        newQuantity.value = 1
+                    }
+                }
+
+                function removeItem(index) {
+                    groceryList.value.splice(index, 1)
+                }
+
+                return {
+                    newItem,
+                    newQuantity,
+                    groceryList,
+                    addItem,
+                    removeItem
+                }
+            }
+        }).mount('#app')
+    </script>
+</body>
+</html>
